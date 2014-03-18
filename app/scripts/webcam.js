@@ -29,7 +29,7 @@ angular.module('webcam', [])
         placeholder: '='
       },
       link: function postLink($scope, element) {
-        var videoElem, videoStream;
+        var videoElem, videoStream, startElem, canvasElem;//add the start btn and canvas elems
 
         $scope.$on('$destroy', function() {
           if (!!videoStream && typeof videoStream.stop === 'function') {
@@ -81,6 +81,17 @@ angular.module('webcam', [])
         videoElem.setAttribute('autoplay', '');
         element.append(videoElem);
 
+        // added start button
+        startElem = document.createElement('button');
+        startElem.setAttribute('id', 'startButton');
+        startElem.textContent = 'Take a Pic';
+        element.append(startElem);
+
+        //added canvas element
+        canvasElem = document.createElement('canvas');
+        canvasElem.setAttribute('id', 'canvas');
+        element.append(canvasElem);
+
         if ($scope.placeholder) {
           var placeholder = document.createElement('img');
           placeholder.setAttribute('class', 'webcam-loader');
@@ -128,6 +139,21 @@ angular.module('webcam', [])
             }
           }
         }, false);
+
+        //added function to take picture
+        function takepicture() {
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext('2d').drawImage(videoElem, 0, 0, width, height);
+          var data = canvas.toDataURL('image/png');
+          //photo.setAttribute('src', data);
+        }
+
+        startButton.addEventListener('click', function(ev){
+            takepicture();
+          ev.preventDefault();
+        }, false);
+
       }
     };
   });
